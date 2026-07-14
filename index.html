@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GG Launcher</title>
+  <!-- Google Fonts for Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Custom Frameless Window Title Bar -->
+  <header class="title-bar">
+    <div class="brand">
+      <img src="assets/logo.png" alt="GG" class="logo-img">
+      <span class="brand-title">GG LAUNCHER</span>
+    </div>
+    <div class="window-controls">
+      <button id="btn-minimize" class="control-btn" title="Minimalizuj">&#9472;</button>
+      <button id="btn-maximize" class="control-btn" title="Maksymalizuj na pełny ekran">&#9633;</button>
+      <button id="btn-close" class="control-btn close-hover" title="Zamknij">&#10005;</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="tab-dashboard">
+          <span class="icon">&#127968;</span> Dashboard
+        </button>
+        <button class="nav-item" data-tab="tab-settings">
+          <span class="icon">&#9881;</span> Ustawienia
+        </button>
+        <button class="nav-item" data-tab="tab-console">
+          <span class="icon">&#128187;</span> Konsola
+        </button>
+        <button class="nav-item" data-tab="tab-creators">
+          <span class="icon">&#128101;</span> Twórcy
+        </button>
+        <button class="nav-item" data-tab="tab-mods">
+          <span class="icon">&#128230;</span> GG Mods
+        </button>
+        <button class="nav-item" data-tab="tab-ai">
+          <span class="icon">&#129302;</span> GG AI
+        </button>
+        <button class="nav-item" data-tab="tab-skins">
+          <span class="icon">&#128085;</span> Skórki
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="status-indicator">
+          <span class="indicator-dot online"></span>
+          <span id="launcher-status-text">Gotowy do gry</span>
+        </div>
+        <div class="launcher-version">v1.0.0</div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="content-area">
+      <!-- Tab 1: Dashboard -->
+      <section id="tab-dashboard" class="tab-content active">
+        <div class="dashboard-grid">
+          <!-- Left Panel: Launch Configuration -->
+          <div class="panel main-panel glass">
+            <h2 class="panel-title">GG LAUNCHER</h2>
+            <p class="panel-subtitle">Graj w Minecraft Java Edition szybko i stabilnie.</p>
+            
+            <div class="form-group">
+              <label>Konto Gracza</label>
+              <div class="active-account-card">
+                <div class="avatar-wrapper-mini">
+                  <img id="active-account-avatar" src="https://mc-heads.net/avatar/GG_Player/40" alt="Avatar" class="account-avatar">
+                </div>
+                <div class="account-details">
+                  <span id="active-account-name" class="account-name">GG_Player</span>
+                  <span id="active-account-type" class="account-type">Offline</span>
+                </div>
+                <button id="btn-change-account" class="btn btn-secondary btn-sm" type="button">Zmień konto</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="version-select">Wersja gry</label>
+              <div class="input-wrapper">
+                <span class="input-icon">&#128196;</span>
+                <select id="version-select">
+                  <option value="loading" disabled selected>Ładowanie wersji...</option>
+                </select>
+              </div>
+              
+              <!-- Dynamic filters for version categories -->
+              <div class="version-filters">
+                <label class="filter-checkbox-container">
+                  <input type="checkbox" id="filter-releases" checked>
+                  <span class="checkbox-custom"></span> Releases
+                </label>
+                <label class="filter-checkbox-container">
+                  <input type="checkbox" id="filter-snapshots">
+                  <span class="checkbox-custom"></span> Snapshots
+                </label>
+                <label class="filter-checkbox-container">
+                  <input type="checkbox" id="filter-betas">
+                  <span class="checkbox-custom"></span> Betas
+                </label>
+                <label class="filter-checkbox-container">
+                  <input type="checkbox" id="filter-alphas">
+                  <span class="checkbox-custom"></span> Alphas
+                </label>
+              </div>
+            </div>
+
+            <!-- Launcher Actions -->
+            <div class="launch-action-container">
+              <button id="btn-launch" class="launch-btn btn-glowing">
+                <span class="btn-text">URUCHOM GRĘ</span>
+              </button>
+              
+              <!-- Progress Container -->
+              <div id="progress-container" class="progress-container hidden">
+                <div class="progress-details">
+                  <span id="progress-status">Rozpoczynanie pobierania...</span>
+                  <span id="progress-percent">0%</span>
+                </div>
+                <div class="progress-bar-wrapper">
+                  <div id="progress-bar-fill" class="progress-bar-fill" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Panel: Minecraft Server & News -->
+          <div class="panel news-panel glass">
+            <div class="news-header">
+              <h3>GG NETWORK</h3>
+              <span class="badge orange">Zagraj z Nami</span>
+            </div>
+            
+            <div class="server-status-card">
+              <div class="server-info">
+                <span class="server-ip">mc.ggnetwork.pl</span>
+                <span class="server-ping">Online: 412/1000</span>
+              </div>
+              <button class="btn btn-secondary btn-sm" id="btn-copy-ip">Kopiuj IP</button>
+            </div>
+
+            <!-- Skin Face Cutter -->
+            <div class="face-cutter-card">
+              <div class="face-cutter-header">
+                <span class="face-cutter-title">WYCINARKA TWARZY</span>
+                <span class="badge orange" style="font-size: 8px;">Narzędzie</span>
+              </div>
+              <p style="font-size: 11px; color: var(--color-text-secondary); margin-bottom: 2px;">
+                Wytnij twarz ze skina gracza premium lub pliku z komputera:
+              </p>
+              <div class="face-cutter-row">
+                <input type="text" id="cutter-nick-input" placeholder="Nick premium Minecraft...">
+                <button id="btn-cutter-fetch" class="btn btn-primary btn-sm" type="button">Pobierz</button>
+              </div>
+              <div class="face-cutter-row" style="margin-top: 8px;">
+                <input type="file" id="cutter-file-input" style="display: none;" accept="image/png">
+                <button id="btn-cutter-file" class="btn btn-secondary btn-sm" type="button" style="flex: 1;">Wgraj skin z komputera</button>
+                <button id="btn-cutter-active" class="btn btn-secondary btn-sm" type="button" title="Użyj skina aktywnego konta">Użyj obecnego</button>
+              </div>
+
+              <!-- Preview Area (hidden by default) -->
+              <div id="cutter-preview-area" class="face-cutter-preview-container hidden">
+                <div class="face-cutter-preview-item">
+                  <span class="face-cutter-preview-label">8x8 (1x)</span>
+                  <img id="cutter-preview-1x" class="face-cutter-img" style="width: 16px; height: 16px;">
+                </div>
+                <div class="face-cutter-preview-item">
+                  <span class="face-cutter-preview-label">64x64 (8x)</span>
+                  <img id="cutter-preview-8x" class="face-cutter-img" style="width: 48px; height: 48px;">
+                </div>
+                <div class="face-cutter-preview-item">
+                  <span class="face-cutter-preview-label">128x128 (16x)</span>
+                  <img id="cutter-preview-16x" class="face-cutter-img" style="width: 80px; height: 80px;">
+                </div>
+                <div class="face-cutter-actions">
+                  <button id="btn-cutter-download-64" class="btn btn-primary btn-sm" type="button" style="padding: 4px 8px; font-size: 9px; line-height: 1.1; margin-bottom: 4px; width: 80px;">Pobierz 64px</button>
+                  <button id="btn-cutter-download-128" class="btn btn-primary btn-sm" type="button" style="padding: 4px 8px; font-size: 9px; line-height: 1.1; width: 80px;">Pobierz 128px</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="news-list">
+              <div class="news-item">
+                <div class="news-meta">
+                  <span class="news-date">20 czerwca 2026</span>
+                  <span class="news-tag">Aktualizacja</span>
+                </div>
+                <h4>Nowa edycja Survival + Działki!</h4>
+                <p>Już w ten piątek o 18:00 zapraszamy na otwarcie nowej edycji survival. Nowe biomy, ulepszony system ekonomii!</p>
+              </div>
+              <div class="news-item">
+                <div class="news-meta">
+                  <span class="news-date">15 czerwca 2026</span>
+                  <span class="news-tag">Wydarzenie</span>
+                </div>
+                <h4>Turniej PvP 1vs1</h4>
+                <p>Zapisz się na discordzie i walcz o cenne nagrody. Pula nagród: VIP na 60 dni oraz unikalne rangi.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 2: Settings -->
+      <section id="tab-settings" class="tab-content">
+        <div class="panel glass full-height-panel">
+          <h2 class="panel-title">Ustawienia Launchera</h2>
+          <div class="settings-grid">
+            
+            <!-- RAM Allocation -->
+            <div class="settings-card">
+              <h3>Alokacja Pamięci RAM</h3>
+              <p class="settings-desc">Zalecane: 4GB dla normalnej gry, więcej dla modów.</p>
+              <div class="ram-control">
+                <input type="range" id="ram-slider" min="1" max="16" step="1" value="4">
+                <div class="ram-display">
+                  <span id="ram-value">4</span> <span class="unit">GB</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Directories -->
+            <div class="settings-card">
+              <h3>Katalog Gry (Game Directory)</h3>
+              <div class="file-picker-group">
+                <input type="text" id="game-dir-input" placeholder="Domyślna (.minecraft)">
+                <button id="btn-browse-game-dir" class="btn btn-secondary">Przeglądaj</button>
+              </div>
+            </div>
+
+            <!-- Java Path -->
+            <div class="settings-card">
+              <h3>Ścieżka do Java (JVM)</h3>
+              <p class="settings-desc">Zostaw puste, aby użyć domyślnej Javy systemowej.</p>
+              <div class="file-picker-group">
+                <input type="text" id="java-path-input" placeholder="Domyślna (Autodetekcja)">
+                <button id="btn-browse-java" class="btn btn-secondary">Przeglądaj</button>
+              </div>
+            </div>
+
+            <!-- Resolution -->
+            <div class="settings-card">
+              <h3>Rozdzielczość Okna Gry</h3>
+              <div class="resolution-inputs">
+                <div class="form-group-inline">
+                  <label for="game-width">Szerokość</label>
+                  <input type="number" id="game-width" value="1024">
+                </div>
+                <div class="form-group-inline">
+                  <label for="game-height">Wysokość</label>
+                  <input type="number" id="game-height" value="768">
+                </div>
+              </div>
+            </div>
+
+            <!-- Developer Auto-Update section (Visible only in Developer Mode) -->
+            <div id="dev-card" class="settings-card hidden" style="grid-column: span 2; border: 1px dashed var(--color-accent); background: rgba(255, 102, 0, 0.02); margin-top: 15px;">
+              <h3 style="color: var(--color-accent);">&#128736; Panel Dewelopera - Wydawanie Aktualizacji</h3>
+              <p class="settings-desc">Widoczne tylko na Twoim komputerze dzięki plikowi <code>update_config.json</code>. Kliknij przycisk poniżej, aby automatycznie zbudować wersję produkcyjną launchera i przymusowo wypuścić nową wersję na serwery GitHub dla wszystkich graczy.</p>
+              
+              <div class="dev-actions" style="margin-top: 15px; display: flex; flex-direction: column; gap: 10px;">
+                <button id="btn-release-update" class="btn btn-primary" style="background: linear-gradient(135deg, #ff8c00 0%, #ff4500 100%); border: none; font-weight: bold; width: 100%; padding: 12px;" type="button">
+                  WYPUŚĆ NOWĄ AKTUALIZACJĘ (UPDATE)
+                </button>
+                
+                <div id="dev-release-log" class="hidden" style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; font-family: monospace; font-size: 11px; color: #fff; line-height: 1.6; max-height: 150px; overflow-y: auto; text-align: left;">
+                  <!-- Progress status logs will go here -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+          
+          <div class="settings-footer">
+            <button id="btn-save-settings" class="btn btn-primary">Zapisz Ustawienia</button>
+            <button id="btn-reset-settings" class="btn btn-secondary">Domyślne</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 3: Console Logs -->
+      <section id="tab-console" class="tab-content">
+        <div class="panel glass console-panel">
+          <div class="console-header">
+            <h2 class="panel-title">Konsola Logów</h2>
+            <div class="console-actions">
+              <button id="btn-clear-console" class="btn btn-secondary btn-sm">Wyczyść</button>
+              <button id="btn-copy-console" class="btn btn-secondary btn-sm">Kopiuj</button>
+            </div>
+          </div>
+          <div id="console-output" class="console-output-area">
+            <div class="console-line system">[SYSTEM] Witamy w GG Launcher. Konsola jest gotowa...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 4: Creators -->
+      <section id="tab-creators" class="tab-content">
+        <div class="panel glass creators-panel">
+          <h2 class="panel-title">Twórcy GG Launchera</h2>
+          <p class="panel-subtitle">Osoby odpowiedzialne za powstanie, rozwój i testy aplikacji.</p>
+          
+          <div class="creators-list">
+            <!-- Creator 1 -->
+            <div class="creator-card">
+              <div class="creator-avatar-wrapper">
+                <img src="https://minotar.net/avatar/Itzz_Sigma03/64" alt="Itzz_Sigma03" class="creator-avatar">
+              </div>
+              <div class="creator-info">
+                <div class="creator-name-row">
+                  <span class="creator-name">Itzz_Sigma03</span>
+                  <span class="verified-badge" title="Zweryfikowany Właściciel">&#10003;</span>
+                </div>
+                <span class="creator-role">Właściciel GG Launchera</span>
+              </div>
+            </div>
+
+            <!-- Creator 2 -->
+            <div class="creator-card">
+              <div class="creator-avatar-wrapper">
+                <img src="https://minotar.net/avatar/MHF_Robot/64" alt="Antigravity" class="creator-avatar">
+              </div>
+              <div class="creator-info">
+                <div class="creator-name-row">
+                  <span class="creator-name">Antigravity</span>
+                  <span class="verified-badge" title="Zweryfikowany Programista">&#10003;</span>
+                </div>
+                <span class="creator-role">Programista GG Launchera</span>
+              </div>
+            </div>
+
+            <!-- Creator 3 -->
+            <div class="creator-card">
+              <div class="creator-avatar-wrapper">
+                <img src="https://minotar.net/avatar/Dawidek_ProKoks/64" alt="Dawidek_ProKoks" class="creator-avatar">
+              </div>
+              <div class="creator-info">
+                <div class="creator-name-row">
+                  <span class="creator-name">Dawidek_ProKoks</span>
+                  <span class="verified-badge" title="Zweryfikowany Tester">&#10003;</span>
+                </div>
+                <span class="creator-role">Pierwszy beta tester GG Launchera</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 5: GG Mods -->
+      <section id="tab-mods" class="tab-content">
+        <div class="panel glass mods-panel">
+          <div class="mods-grid">
+            <!-- Left Side: My Modpacks -->
+            <div class="modpacks-sidebar-panel">
+              <h3 class="panel-sub-title-custom">Moje Modpacki</h3>
+              
+              <!-- Modpack Creation -->
+              <div class="new-modpack-form-container" style="margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px;">
+                <div class="new-modpack-form" style="display: flex; gap: 8px;">
+                  <input type="text" id="new-modpack-name" placeholder="Nazwa nowego modpacka..." style="flex: 1; font-size: 11px;">
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <select id="new-modpack-version" style="flex: 1; font-size: 11px; background: var(--color-bg-input); border: 1px solid var(--color-border); color: var(--color-white); border-radius: 6px; padding: 6px 8px; outline: none; transition: border-color 0.2s; cursor: pointer;">
+                    <option value="" disabled selected>Wersja Minecraft...</option>
+                  </select>
+                  <select id="new-modpack-loader" style="width: 100px; font-size: 11px; background: var(--color-bg-input); border: 1px solid var(--color-border); color: var(--color-white); border-radius: 6px; padding: 6px 8px; outline: none; transition: border-color 0.2s; cursor: pointer;">
+                    <option value="Fabric" selected>Fabric</option>
+                    <option value="Forge">Forge</option>
+                    <option value="NeoForge">NeoForge</option>
+                    <option value="Vanilla">Vanilla</option>
+                  </select>
+                  <button id="btn-create-modpack" class="btn btn-primary btn-sm" type="button" style="padding: 6px 12px;">Stwórz</button>
+                </div>
+              </div>
+
+              <!-- Modpacks List -->
+              <div id="modpacks-list" class="modpacks-list">
+                <!-- Dynamic modpack items will go here -->
+              </div>
+
+              <!-- Active Modpack Details -->
+              <div class="active-modpack-details-container">
+                <div class="details-header-row">
+                  <h4 id="active-modpack-title" style="color: var(--color-white); font-size: 13px;">Wybierz modpack</h4>
+                </div>
+                <div id="active-modpack-mods-list" class="active-modpack-mods-list">
+                  <div class="empty-modpack-message">Wybierz modpack z listy powyżej lub stwórz nowy.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side: Mod Browser -->
+            <div class="mod-browser-panel">
+              <div class="mod-browser-header">
+                <h3 class="panel-sub-title-custom" style="margin-bottom: 0;">Baza Modyfikacji</h3>
+                <div class="input-wrapper" style="width: 240px;">
+                  <span class="input-icon">&#128269;</span>
+                  <input type="text" id="mod-search-input" placeholder="Wyszukaj mody..." style="padding: 8px 12px 8px 34px; font-size: 12px;">
+                </div>
+              </div>
+
+              <div id="mods-browser-list" class="mods-browser-list">
+                <!-- Dynamic mods list will go here -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════ GG AI TAB ═══════════════════════════════════════ -->
+      <section id="tab-ai" class="tab-content hidden">
+        <div class="gg-ai-container">
+          <!-- Header -->
+          <div class="gg-ai-header">
+            <div class="gg-ai-title">
+              <span class="gg-ai-robot">&#129302;</span>
+              <div>
+                <h2>GG AI</h2>
+                <p>Generator modów Minecraft &amp; asystent • powered by Gemini</p>
+              </div>
+            </div>
+            <div class="gg-ai-controls">
+              <select id="ai-model-select" class="ai-model-select">
+                <option value="gemini-2.5-flash">Gemini 2.5 Flash ⚡</option>
+                <option value="gemini-2.5-pro">Gemini 2.5 Pro 🧠</option>
+                <option value="gemini-2.0-flash">Gemini 2.0 Flash 🚀</option>
+                <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+              </select>
+              <button id="btn-ai-clear" class="btn btn-secondary btn-sm">&#128465; Wyczyść</button>
+            </div>
+          </div>
+
+          <!-- Mod Generator toolbar -->
+          <div class="ai-mod-toolbar">
+            <!-- Mode buttons -->
+            <div class="ai-mode-btns">
+              <button id="btn-mode-chat" class="ai-mode-btn active">&#128172; Czat</button>
+              <button id="btn-mode-modgen" class="ai-mode-btn">&#128296; Generator Moda</button>
+            </div>
+            <!-- Mod options (shown in modgen mode) -->
+            <div id="ai-mod-options" class="ai-mod-options hidden">
+              <select id="ai-loader-select" class="ai-model-select">
+                <option value="Forge">Forge</option>
+                <option value="Fabric">Fabric</option>
+                <option value="NeoForge">NeoForge</option>
+              </select>
+              <select id="ai-mcver-select" class="ai-model-select">
+                <option value="1.20.1">1.20.1</option>
+                <option value="1.19.2">1.19.2</option>
+                <option value="1.18.2">1.18.2</option>
+                <option value="1.16.5">1.16.5</option>
+                <option value="1.12.2">1.12.2</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- API Key bar -->
+          <div class="gg-ai-apikey-bar">
+            <span class="gg-ai-key-icon">&#128273;</span>
+            <input type="password" id="ai-api-key" placeholder="Klucz Gemini API (aistudio.google.com → Get API key)" class="ai-api-key-input">
+            <button id="btn-ai-save-key" class="btn btn-primary btn-sm">Zapisz</button>
+          </div>
+
+          <!-- Chat window -->
+          <div id="ai-chat-window" class="ai-chat-window">
+            <div class="ai-welcome-msg">
+              <span class="ai-welcome-icon">&#129302;</span>
+              <div class="ai-welcome-text">
+                <strong>Cześć! Jestem GG AI – generator grywalnych modów Minecraft!</strong>
+                <p>Mogę <strong>stworzyć dla Ciebie grywalny mod</strong> do Minecrafta i zainstalować go od razu jednym kliknięciem przycisku <strong>⚡ ZAINSTALUJ GRYWALNY MOD</strong>! Obsługuję <strong>Forge, Fabric i NeoForge</strong>.</p>
+                <p style="margin-top:8px;">Przykłady co możesz napisać:</p>
+                <ul style="margin-top:4px;margin-left:16px;font-size:11px;opacity:0.8;line-height:1.8;">
+                  <li>„Zrób mod który dodaje nowy miecz zadający 50 obrażeń"</li>
+                  <li>„Napisz mod dodający nową rudę diamentu w Netherze"</li>
+                  <li>„Stwórz mod który przy zabiciu Creepera spawnuje 3 diamenty"</li>
+                  <li>„Zrób mod dodający latające krowy"</li>
+                </ul>
+                <p style="margin-top:8px;font-size:11px;opacity:0.6;">Wklej klucz Gemini API powyżej aby zacząć.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Input bar -->
+          <div class="ai-input-bar">
+            <textarea id="ai-user-input" class="ai-user-input" placeholder="Opisz mod który chcesz stworzyć... (Enter = wyślij, Shift+Enter = nowa linia)" rows="1"></textarea>
+            <button id="btn-ai-send" class="btn-ai-send" title="Wyślij">&#10148;</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════ SKINS TAB ═══════════════════════════════════════ -->
+      <section id="tab-skins" class="tab-content hidden">
+        <div class="panel glass skins-panel" style="max-width: 600px; margin: 0 auto;">
+          <h2 class="panel-title">&#128085; Zmień Skórkę</h2>
+          <p class="panel-subtitle" style="margin-bottom: 20px; color: var(--color-text-secondary); font-size: 13px;">
+            Tutaj możesz zmienić skin dla swojego aktywnego konta. Wgraj plik graficzny z komputera (.png, .jpg lub .bmp), a my dopasujemy go do formatu Minecrafta.
+          </p>
+
+          <div class="active-skin-card" style="display: flex; gap: 20px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 12px; margin-bottom: 15px; align-items: center;">
+            <div class="active-skin-avatar-wrapper" style="width: 80px; height: 80px; background: rgba(0, 0, 0, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;">
+              <img id="skins-active-avatar" src="https://mc-heads.net/avatar/MHF_Steve/80" alt="Avatar" style="width: 64px; height: 64px; image-rendering: pixelated;">
+            </div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--color-accent); font-weight: bold; margin-bottom: 6px;">Zmień skórkę dla konta</div>
+              <select id="skins-account-select" style="width: 100%; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 8px 12px; font-size: 14px; font-family: inherit; cursor: pointer; outline: none; margin-bottom: 6px;">
+                <option disabled>Ładowanie kont...</option>
+              </select>
+              <h3 id="skins-active-name" style="margin: 2px 0; font-size: 18px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Brak konta</h3>
+              <div id="skins-active-type" style="font-size: 12px; color: var(--color-text-secondary);">Offline</div>
+            </div>
+          </div>
+
+
+          <div class="skin-change-form" style="display: flex; flex-direction: column; gap: 15px;">
+            <label style="font-size: 13px; font-weight: bold; color: #fff;">Wybierz nowy plik skina</label>
+            
+            <div class="skin-upload-area" style="border: 2px dashed rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.2s; background: rgba(255, 255, 255, 0.01);" id="skins-drop-zone" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='rgba(255,255,255,0.01)'">
+              <span style="font-size: 32px; display: block; margin-bottom: 10px;">&#128193;</span>
+              <span id="skins-file-status" style="font-size: 13px; color: var(--color-text-secondary); display: block;">Kliknij tutaj, aby wybrać plik</span>
+              <span style="font-size: 10px; color: var(--color-text-secondary); opacity: 0.6; display: block; margin-top: 5px;">Obsługiwane: .png, .jpg, .bmp (automatyczne skalowanie do 64x64)</span>
+              <input type="file" id="skins-file-input" style="display: none;" accept="image/png, image/jpeg, image/bmp">
+            </div>
+
+            <div id="skins-preview-container" class="hidden" style="text-align: center; margin-top: 10px; background: rgba(0,0,0,0.15); padding: 15px; border-radius: 8px;">
+              <span style="font-size: 11px; display: block; margin-bottom: 8px; color: var(--color-text-secondary);">Podgląd nowej skórki (twarz):</span>
+              <img id="skins-preview-img" src="" alt="Podgląd" style="width: 64px; height: 64px; image-rendering: pixelated; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 4px;">
+            </div>
+
+            <button id="btn-skins-save" class="btn btn-primary" style="width: 100%; padding: 12px; margin-top: 10px; font-weight: bold;" disabled>ZAPISZ NOWĄ SKÓRKĘ</button>
+
+            <!-- SkinsRestorer / Multiplayer section -->
+            <div class="skins-restorer-section" style="margin-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 15px;">
+              <h4 style="margin: 0 0 8px 0; color: #fff; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+                <span>🌐</span> Gra na serwerach multiplayer (SkinsRestorer)
+              </h4>
+              <p style="font-size: 11px; color: var(--color-text-secondary); margin: 0 0 10px 0; line-height: 1.4;">
+                Chcesz, aby inni gracze na serwerze widzieli Twój skin? Wygeneruj komendę dla wtyczki <strong>SkinsRestorer</strong> i wklej ją na czacie serwera!
+              </p>
+              <div id="skins-restorer-generator" style="display: flex; flex-direction: column; gap: 8px;">
+                <button id="btn-skins-generate-url" class="btn btn-secondary" style="width: 100%; padding: 10px; font-weight: bold; font-size: 11px;" type="button">
+                  WYGENERUJ KOMENDĘ DLA SERWERA (/skin url)
+                </button>
+                <div id="skins-restorer-result" class="hidden" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; display: flex; flex-direction: column; gap: 6px;">
+                  <div style="font-size: 9px; color: var(--color-accent); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Wklej na czacie w grze:</div>
+                  <div style="display: flex; gap: 6px;">
+                    <input type="text" id="skins-restorer-cmd-input" readonly style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 10px; color: #fff; font-family: monospace; font-size: 11px; outline: none;" value="">
+                    <button id="btn-skins-copy-cmd" class="btn btn-primary" style="padding: 6px 12px; font-size: 11px; font-weight: bold; min-width: 80px;" type="button">KOPIUJ</button>
+                  </div>
+                  <span style="font-size: 9px; color: var(--color-text-secondary); opacity: 0.8;">Skopiuj, otwórz czat na serwerze (klawisz <strong>T</strong>) i wklej (<strong>Ctrl+V</strong>)</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- Accounts Manager Modal -->
+  <div id="accounts-modal" class="modal-overlay hidden">
+    <div class="modal-content glass">
+      <div class="modal-header">
+        <h3>Zarządzanie Kontami</h3>
+        <button id="btn-close-accounts" class="modal-close-btn" type="button">&#10005;</button>
+      </div>
+      <div class="modal-body">
+        <div class="accounts-list-container">
+          <label>Zapisane konta</label>
+          <div id="modal-accounts-list" class="modal-accounts-list">
+            <!-- Dynamic accounts list will be rendered here -->
+          </div>
+        </div>
+        
+        <div class="add-account-form">
+          <label>Dodaj nowe konto</label>
+          <div class="input-wrapper">
+            <span class="input-icon">&#128100;</span>
+            <input type="text" id="new-account-name" placeholder="Wpisz nick gracza...">
+          </div>
+          <div class="checkbox-option" style="margin-top: 10px;">
+            <label class="filter-checkbox-container">
+              <input type="checkbox" id="chk-use-premium-skin" checked>
+              <span class="checkbox-custom"></span> Pobierz skin (premium nick)
+            </label>
+          </div>
+          
+          <div class="skin-upload-container" style="margin-top: 12px;">
+            <input type="file" id="skin-file-input" style="display: none;" accept="image/png, image/jpeg, image/bmp">
+            <button id="btn-select-skin-file" class="btn btn-secondary btn-sm" type="button" style="width: 100%;">Wgraj skin z komputera</button>
+            <span id="skin-file-name" class="skin-file-name" style="font-size: 10px; color: var(--color-text-secondary); margin-top: 4px; display: block; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Dozwolone: .png, .jpg, .bmp</span>
+          </div>
+          <button id="btn-add-account-submit" class="btn btn-primary" type="button" style="width: 100%; margin-top: 15px;">DODAJ KONTO</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

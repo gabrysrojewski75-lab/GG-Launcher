@@ -1,0 +1,40 @@
+{
+  "name": "gg-launcher",
+  "version": "1.0.0",
+  "description": "GG Launcher - Premium Minecraft Java Edition Launcher",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win"
+  },
+  "dependencies": {
+    "minecraft-launcher-core": "^3.18.2"
+  },
+  "devDependencies": {
+    "electron": "^28.2.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.gglauncher.app",
+    "compression": "maximum",
+    "win": {
+      "target": ["portable", "nsis"],
+      "icon": "assets/logo.png"
+    },
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!dist/**/*",
+      "!node_modules/electron/**/*",
+      "!node_modules/electron-builder/**/*"
+    ]
+  },
+  "author": "Antigravity",
+  "license": "MIT",
+  "updateConfig": {
+    "owner": "ItzzSigma03",
+    "repo": "gg-launcher"
+  }
+}
